@@ -5,19 +5,28 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
 // pantalla uno 
-function HomeScreen() {
+function PeopleScreen() {
   return (
     <View style={styles.homeScreen}>
-      <Text>!Home</Text>
+      <Text>PeopleScreen</Text>
     </View>
   )
 }
 
 // pantalla dos
-function SettingScreen() {
+function DesicionScreen() {
   return (
     <View style={styles.settingScreen}>
-      <Text>!settings</Text>
+      <Text>DesicionScreen</Text>
+    </View>
+  )
+}
+
+// pantalla tres 
+function  RestaurantScreen(){
+  return(
+    <View style={styles.restaurantscreen}>
+      <Text>Restaurant Screen</Text>
     </View>
   )
 }
@@ -51,10 +60,12 @@ export default function App() {
          tabBarIcon:({ focused, color, size}) => {
            let iconName;
 
-           if (route.name === 'Home'){
-             iconName = focused ? 'ios-information-circle' : 'ios-information-circle-outline';
-           } else if (route.name === 'Settings') {
-                iconName = focused ? 'ios-list-box' : 'ios-list';
+           if (route.name === 'PeopleScreen'){
+             iconName = focused ? 'ios-person' : 'ios-person-add';
+           } else if (route.name === 'DesicionScreen') {
+                iconName = focused ? 'ios-checkbox' : 'ios-checkbox-outline';
+           } else if (route.name === 'RestaurantScreen'){
+             iconName = focused ? 'md-cart' : 'md-restaurant';
            }
 
            // You can return any component that you like here!
@@ -68,8 +79,9 @@ export default function App() {
        }}
        
      >
-      <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen  name="Settings" component={SettingScreen}/>
+      <Tab.Screen name="PeopleScreen" component={PeopleScreen} />
+      <Tab.Screen  name="DesicionScreen" component={DesicionScreen}/>
+      <Tab.Screen  name="RestaurantScreen" component={RestaurantScreen}/>
 
      </Tab.Navigator>
      </NavigationContainer>
@@ -83,6 +95,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   settingScreen:{
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  restaurantscreen:{
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
