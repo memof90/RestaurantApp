@@ -94,6 +94,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  textHomeScreenColor:{
+  backgroundColor: 'tomato'
+  },
   settingScreen:{
     flex: 1,
     alignItems: 'center',
