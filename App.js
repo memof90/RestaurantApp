@@ -5,13 +5,13 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
 import RestaurantScreens from './src/Screens/RestaurantsScreen';
+import PeopleScreens from './src/Screens/PeopleScreen';
 
 // pantalla uno 
 function PeopleScreen() {
   return (
-    <View>
-      <Text>hola desde peopleScreen</Text>
-    </View>
+      
+      <PeopleScreens />
   )
 }
 
