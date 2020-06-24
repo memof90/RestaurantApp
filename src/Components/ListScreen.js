@@ -31,10 +31,10 @@ class ListScreen extends Component {
             <Root>
                 <View style={styles.listScreenContainer}>
 
-{/* El siguiente es el componente Add Restaurant CustomButton. 
-Es una configuración simple, pero el controlador onPress le ofrece algo nuevo para ver. 
-Como descubrirá al final de este capítulo, la pantalla de lista (así como la pantalla de agregar de la que hablaremos a continuación) se encuentran dentro de un Navegador de pila de navegación de reacción. Este navegador proporciona una manera de tener múltiples componentes, nuestra lista y agregar pantallas secundarias, apiladas una encima de la otra, de modo que solo una sea visible en un momento dado, y podemos llamar a algunos métodos para cambiar entre ellas. React Navigation agregará automáticamente un atributo de navegación a la colección de accesorios del componente de nivel superior. Ese atributo es un objeto que contiene algunos métodos que podemos llamar, uno de los cuales es navegar (). Lo que le proporcionamos es el nombre de la pantalla que incluye el StackNavigator que queremos mostrar, 
-y el navegador se encarga de cambiar entre ellos. */}
+                    {/* El siguiente es el componente Add Restaurant CustomButton. 
+                    Es una configuración simple, pero el controlador onPress le ofrece algo nuevo para ver. 
+                    Como descubrirá al final de este capítulo, la pantalla de lista (así como la pantalla de agregar de la que hablaremos a continuación) se encuentran dentro de un Navegador de pila de navegación de reacción. Este navegador proporciona una manera de tener múltiples componentes, nuestra lista y agregar pantallas secundarias, apiladas una encima de la otra, de modo que solo una sea visible en un momento dado, y podemos llamar a algunos métodos para cambiar entre ellas. React Navigation agregará automáticamente un atributo de navegación a la colección de accesorios del componente de nivel superior. Ese atributo es un objeto que contiene algunos métodos que podemos llamar, uno de los cuales es navegar (). Lo que le proporcionamos es el nombre de la pantalla que incluye el StackNavigator que queremos mostrar, 
+                    y el navegador se encarga de cambiar entre ellos. */}
                  <CustomButton 
                      text="add Restaurant" width="94%"
                      onPress={ () => { this.props.navigation.navigate("AddScreen"); } }
@@ -44,12 +44,30 @@ y el navegador se encarga de cambiar entre ellos. */}
                      
                      <View style={styles.restaurantContainer}>
                        <Text style={styles.restaurantName}>{item.name}</Text>
+                            {/* Ahora, dentro de ese botón hay un controlador onPress, 
+                            y hay algunas cosas interesantes que suceden allí. 
+                            Primero, la API de alerta se usa para pedirle al usuario que confirme la eliminación. 
+                            Hay tres botones presentes: Sí, No y Cancelar. Al presionar cualquiera de ellos (o tocar fuera de la ventana emergente en Android, 
+                            gracias al atributo cancelable que se establece en verdadero), 
+                            se cerrará la ventana emergente sin que ocurra nada. 
+                            Es el código dentro del controlador del botón Sí que hace todo el trabajo, como era de esperar. */}
                        <CustomButton text="Delete"
                          onPress={() => {
                              Alert.alert("Please confirm",
                               "Are you sure you want to delete this restaurant?",
                               [
                                   {text: "yes", onPress:()=>{
+                                    // Ese trabajo se realiza en dos partes. 
+                                    // Primero, el restaurante debe ser eliminado. 
+                                    // Esto se hace mediante el uso de la API AsyncStorage, 
+                                    // para recuperar la lista de restaurantes. AsyncStorage es muy similar al almacenamiento local en un navegador web, ya que es un simple almacén de datos de valores clave. 
+                                    // Solo puede almacenar cadenas en él, por lo que tendrá que serializar y deserializar cualquier cosa hacia y desde una cadena, como un objeto JavaScript, como es el caso aquí. 
+                                    // Se llama al método getItem () para obtener el objeto debajo de los restaurantes clave. 
+                                    // Si todavía no hay ninguno, lo que significa que el usuario no ha creado ningún restaurante, se crea una matriz vacía. 
+                                    // De lo contrario, la cadena recuperada se deserializa en un objeto utilizando el conocido método JSON.parse () (y disponible en React Native code). 
+                                    // Después de eso, se trata simplemente de iterar la matriz y encontrar el restaurante con la clave 
+                                    // (que todos los restaurantes tienen) que coincida con la clave del elemento del elemento FlatList que se representa y eliminarlo de la matriz.
+
                                       AsyncStorage.getItem("restaurants",
                                       function(inError, inRestaurants){
                                           if(inRestaurants === null){
@@ -65,9 +83,14 @@ y el navegador se encarga de cambiar entre ellos. */}
                                                   break;
                                               }
                                           }
+                                        //   Una vez eliminado de la matriz, el siguiente paso es volver a escribir la matriz en el almacenamiento, utilizando AsyncStorage.setItem (), utilizando JSON.stringify () 
+                                        //   para serializar la matriz de restaurantes en una cadena para el almacenamiento. Tenga en cuenta que tanto getItem () como setItem () 
+                                        //   son métodos asincrónicos, por lo que deberá proporcionar un controlador de devolución de llamada para cada uno, y la eliminación de la matriz y la llamada a 
+                                        //   setItem () se realiza en la devolución de llamada para getItem () llamada.
                                           AsyncStorage.setItem("restaurants",
                                           JSON.stringify(inRestaurants),function(){
                                               this.setState({listData: inRestaurants});
+                                            //   Finalmente, en el controlador de devolución de llamada para la llamada setItem (), la API NativeBase Toast se usa para mostrar un mensaje que indica que la eliminación se realizó correctamente. Esto toma la forma de una pequeña pancarta que aparece en la parte inferior de la pantalla, especificada por un período de dos segundos, que se leerá por haber puesto el tipo en peligro.
                                               Toast.show({
                                                   text: "Restaurant deleted",
                                                   position: "bottom", type:"danger",
@@ -125,6 +148,9 @@ const styles = StyleSheet.create({
         borderBottomWidth : 2, 
         alignItems : "center" 
     },
+    // ¡Sí, más flexbox! Esto es para que el nombre del restaurante ocupe todo el espacio que pueda, menos el espacio para Eliminar CustomButton, que es el segundo
+    // niño dentro de la vista. El botón se ajustará automáticamente a su texto, por lo que efectivamente tiene un ancho definido, lo que significa que el componente de nombre de texto llenará cualquier espacio horizontal 
+    // que quede después de que se presiona el botón.
     restaurantName : { 
         flex : 1 
     }
