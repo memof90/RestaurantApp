@@ -4,11 +4,13 @@ import { Ionicons } from '@expo/vector-icons';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
+import RestaurantScreens from './src/Screens/RestaurantsScreen';
+
 // pantalla uno 
 function PeopleScreen() {
   return (
-    <View style={styles.homeScreen}>
-      <Text>PeopleScreen</Text>
+    <View>
+      <Text>hola desde peopleScreen</Text>
     </View>
   )
 }
@@ -25,9 +27,7 @@ function DesicionScreen() {
 // pantalla tres 
 function  RestaurantScreen(){
   return(
-    <View style={styles.restaurantscreen}>
-      <Text>Restaurant Screen</Text>
-    </View>
+   <RestaurantScreens />
   )
 }
 
