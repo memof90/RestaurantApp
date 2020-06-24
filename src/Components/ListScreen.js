@@ -26,6 +26,37 @@ class ListScreen extends Component {
             listData : [ ]
         };
     }
+
+
+    // La parte final de la ecuación es algo a lo que aludí anteriormente, es decir, obtener los datos en la FlatList en primer lugar. Eso se hace en el método componentDidMount (), 
+    // que React Native llamará una vez que se haya creado el componente de nivel superior.
+
+    componentDidMount(){
+
+// Primero, 
+// debemos considerar qué debería o no debería suceder cuando el usuario presiona el botón de retroceso de hardware 
+// en un dispositivo Android. Por defecto, el usuario volverá a través de todas las pantallas a las que ha navegado en orden inverso 
+// (se construye una pila a medida que pasa de una pantalla a otra, por lo que presionar hacia atrás solo sale de las pantallas de esa pila). Con frecuencia, esto es precisamente lo que quieres que suceda, pero en esta aplicación, no me pareció que funcionara de la forma lógica que esperabas, por lo que quería deshabilitar esa funcionalidad. Para hacer eso, adjuntas un detector de eventos utilizando la API BackHandler, y la función que se ejecuta solo tiene que devolver verdadero, 
+// y la navegación que generalmente ocurre se detendrá.
+        BackHandler.addEventListener("hardwareBackPress", ()=> {return true;});
+        AsyncStorage.getItem("restaurants",
+        // Con eso fuera del camino, es hora de llevar los datos a la FlatList.
+        //  Está sentado allí en AsyncStorage, por supuesto, 
+        //  por lo que es solo una cuestión de usar el mismo método getItem () que viste hace un momento, hacer la misma comprobación de nulo para evitar errores y luego llamar a setState () en el componente y pasar la lista de restaurantes como el atributo listData. 
+        // React Native se encarga de todo lo demás. 
+        function(inError, inRestaurants){
+            if(inRestaurants === null) {
+                inRestaurants = [];
+            }else {
+                inRestaurants = JSON.parse(inRestaurants);
+            }
+            this.setState({ listData: inRestaurants});
+        }.bind(this)
+        );
+    }
+
+
+
     render() { 
         return ( 
             <Root>
