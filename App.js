@@ -4,8 +4,10 @@ import { Ionicons } from '@expo/vector-icons';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
+// importaciones tab 
 import RestaurantScreens from './src/Screens/RestaurantsScreen';
 import PeopleScreens from './src/Screens/PeopleScreen';
+import DesicionScreens from './src/Screens/DecisionScreen';
 
 // pantalla uno 
 function PeopleScreen() {
@@ -18,9 +20,7 @@ function PeopleScreen() {
 // pantalla dos
 function DesicionScreen() {
   return (
-    <View style={styles.settingScreen}>
-      <Text>DesicionScreen</Text>
-    </View>
+     <DesicionScreens />
   )
 }
 
