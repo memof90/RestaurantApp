@@ -67,7 +67,7 @@ class ListScreen extends Component {
                     Como descubrirá al final de este capítulo, la pantalla de lista (así como la pantalla de agregar de la que hablaremos a continuación) se encuentran dentro de un Navegador de pila de navegación de reacción. Este navegador proporciona una manera de tener múltiples componentes, nuestra lista y agregar pantallas secundarias, apiladas una encima de la otra, de modo que solo una sea visible en un momento dado, y podemos llamar a algunos métodos para cambiar entre ellas. React Navigation agregará automáticamente un atributo de navegación a la colección de accesorios del componente de nivel superior. Ese atributo es un objeto que contiene algunos métodos que podemos llamar, uno de los cuales es navegar (). Lo que le proporcionamos es el nombre de la pantalla que incluye el StackNavigator que queremos mostrar, 
                     y el navegador se encarga de cambiar entre ellos. */}
                  <CustomButton 
-                     text="add Restaurant" width="94%"
+                     text="Add Restaurant" width="94%"
                      onPress={ () => { this.props.navigation.navigate("AddScreen"); } }
                  />
                  <FlatList style={styles.restaurantList} data={this.state.listData}
