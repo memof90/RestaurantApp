@@ -9,27 +9,27 @@ import RestaurantScreens from './src/Screens/RestaurantsScreen';
 import PeopleScreens from './src/Screens/PeopleScreen';
 import DesicionScreens from './src/Screens/DecisionScreen';
 
-// pantalla uno 
-function PeopleScreen() {
-  return (
+// // pantalla uno 
+// function PeopleScreen() {
+//   return (
       
-      <PeopleScreens />
-  )
-}
+//       <PeopleScreens />
+//   )
+// }
 
-// pantalla dos
-function DesicionScreen() {
-  return (
-     <DesicionScreens />
-  )
-}
+// // pantalla dos
+// function DesicionScreen() {
+//   return (
+//      <DesicionScreens />
+//   )
+// }
 
-// pantalla tres 
-function  RestaurantScreen(){
-  return(
-   <RestaurantScreens />
-  )
-}
+// // pantalla tres 
+// function  RestaurantScreen(){
+//   return(
+//    <RestaurantScreens />
+//   )
+// }
 
 // router de pantallas 
 
@@ -79,9 +79,9 @@ export default function App() {
        }}
        
      >
-      <Tab.Screen name="PeopleScreen" component={PeopleScreen} />
-      <Tab.Screen  name="DesicionScreen" component={DesicionScreen}/>
-      <Tab.Screen  name="RestaurantScreen" component={RestaurantScreen}/>
+      <Tab.Screen name="PeopleScreen" component={PeopleScreens} />
+      <Tab.Screen  name="DesicionScreen" component={DesicionScreens}/>
+      <Tab.Screen  name="RestaurantScreen" component={RestaurantScreens}/>
 
      </Tab.Navigator>
      </NavigationContainer>

@@ -5,18 +5,13 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
 
-class RestaurantScreens extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {  }
-    }
-    render() { 
+export default function RestaurantScreens () {
         return (  
             <View style={styles.homeScreen}>
                 <Text>hola desde RestaurantScreens</Text>
             </View>
         );
-    }
+    
 }
 
 const styles = StyleSheet.create({
@@ -28,4 +23,3 @@ const styles = StyleSheet.create({
 
 })
  
-export default RestaurantScreens;
