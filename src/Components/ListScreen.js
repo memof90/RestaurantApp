@@ -3,12 +3,13 @@ import { Alert, BackHandler, FlatList, Picker, Platform, ScrollView,StyleSheet, 
 import AsyncStorage from '@react-native-community/async-storage';
 import Constants from 'expo-constants';
 import { createStackNavigator } from '@react-navigation/stack';
+import { NavigationContainer } from '@react-navigation/native';
 import { Root, Toast } from "native-base";
 
 // importacion componentes
 import CustomButton from '../Components/CustomButton';
 import CustomTextInput from '../Components/CustomTextInput';
-
+import AddScreen from  '../Components/AddScreen';
 // Cada vez que construya un componente y deba hacer algo en el momento de la construcción (que no es obligatorio pero probablemente sea necesario 
 //     la mayoría de las veces), comenzará pasando el objeto al que hace referencia el argumento inProps, 
 //     que contiene todos los accesorios especificados en el etiqueta para el componente y se pasa al constructor por React Native, 
@@ -186,5 +187,9 @@ const styles = StyleSheet.create({
         flex : 1 
     }
 })
+
+
+
+
  
 export default ListScreen;
