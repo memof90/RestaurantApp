@@ -69,7 +69,7 @@ class ListScreen extends Component {
                     y el navegador se encarga de cambiar entre ellos. */}
                  <CustomButton 
                      text="Add Restaurant" width="94%"
-                     onPress={ () => { this.props.navigation.navigate("AddScreen"); } }
+                     onPress={ () => {this.props.navigation.navigate("AddScreen"); } }
                  />
                  <FlatList style={styles.restaurantList} data={this.state.listData}
                      renderItem={({item}) => 
@@ -187,8 +187,6 @@ const styles = StyleSheet.create({
         flex : 1 
     }
 })
-
-
 
 
  

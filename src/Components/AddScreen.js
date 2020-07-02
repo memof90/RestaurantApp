@@ -5,6 +5,7 @@ import Constants from 'expo-constants';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Root, Toast } from "native-base";
 import CustomTextInput from './CustomTextInput';
+import CustomButton from '../Components/CustomButton'
 
 
 
