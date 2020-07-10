@@ -8,41 +8,114 @@ import CustomTextInput from '../Components/CustomTextInput';
 import CustomButton from '../Components/CustomButton';
 
 class ListScreen extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {  
-            listData : [ ]
-        };
-    }
 
 
-    // La parte final de la ecuación es algo a lo que aludí anteriormente, es decir, obtener los datos en la FlatList en primer lugar. Eso se hace en el método componentDidMount (), 
-    // que React Native llamará una vez que se haya creado el componente de nivel superior.
 
-    componentDidMount(){
+  /**
+   * Constructor.
+   */
+  constructor(props) {
 
-// Primero, 
-// debemos considerar qué debería o no debería suceder cuando el usuario presiona el botón de retroceso de hardware 
-// en un dispositivo Android. Por defecto, el usuario volverá a través de todas las pantallas a las que ha navegado en orden inverso 
-// (se construye una pila a medida que pasa de una pantalla a otra, por lo que presionar hacia atrás solo sale de las pantallas de esa pila). Con frecuencia, esto es precisamente lo que quieres que suceda, pero en esta aplicación, no me pareció que funcionara de la forma lógica que esperabas, por lo que quería deshabilitar esa funcionalidad. Para hacer eso, adjuntas un detector de eventos utilizando la API BackHandler, y la función que se ejecuta solo tiene que devolver verdadero, 
-// y la navegación que generalmente ocurre se detendrá.
-        // BackHandler.addEventListener("hardwareBackPress", ()=> {return true;});
-        // AsyncStorage.getItem("restaurants",
-        // // Con eso fuera del camino, es hora de llevar los datos a la FlatList.
-        // //  Está sentado allí en AsyncStorage, por supuesto, 
-        // //  por lo que es solo una cuestión de usar el mismo método getItem () que viste hace un momento, hacer la misma comprobación de nulo para evitar errores y luego llamar a setState () en el componente y pasar la lista de restaurantes como el atributo listData. 
-        // // React Native se encarga de todo lo demás. 
-        // function(inError, inRestaurants){
-        //     if(inRestaurants === null) {
-        //         inRestaurants = [];
-        //     } else {
-        //         inRestaurants = JSON.parse(inRestaurants);
-        //     }
-        //     this.setState({ listData: inRestaurants});
-        // }.bind(this)
-        // );
+    super(props);
 
-            // Block hardware back button on Android.
+    this.state = {
+      listData : [ ],
+      refreshing: false
+    };
+
+  } /* End constructor. */
+
+
+  /**
+   * Render this component.
+   */
+  render() { 
+
+    return (
+
+    <Root>
+      <View style={styles.listScreenContainer}>
+        { /* ########## Add Restaurant button ########## */ }
+        <CustomButton
+          text="Add Restaurant"
+          width="94%"
+          onPress={ () => { this.props.navigation.navigate("AddScreen"); } }
+        />
+        { /* ########## Restaurant list ########## */ }
+        
+        <FlatList
+          style={styles.restaurantList}
+          data={this.state.listData}
+          refreshing={this.state.refreshing}
+          renderItem={ ({item}) =>
+          <ScrollView>
+            <View style={styles.restaurantContainer}>
+              <Text style={styles.restaurantName}>{item.name}</Text>
+              <CustomButton
+                text="Delete"
+                onPress={ () => {
+                  Alert.alert(
+                    "Please confirm",
+                    "Are you sure you want to delete this restaurant?",
+                    [
+                      { text : "Yes", onPress: () => {
+                        // Pull data out of storage.
+                        AsyncStorage.getItem("restaurants",
+                          function(inError, inRestaurants) {
+                            if (inRestaurants === null) {
+                              inRestaurants = [ ];
+                            } else {
+                              inRestaurants = JSON.parse(inRestaurants);
+                            }
+                            // Find the right one to delete and splice it out.
+                            for (let i = 0; i < inRestaurants.length; i++) {
+                              const restaurant = inRestaurants[i];
+                              if (restaurant.key === item.key) {
+                                inRestaurants.splice(i, 1);
+                                break;
+                              }
+                            }
+                            // Store updated data in storage.
+                            AsyncStorage.setItem("restaurants",
+                              JSON.stringify(inRestaurants), function() {
+                                // Set new state to update list.
+                                this.setState({ listData : inRestaurants });
+                                // Show toast message to confirm deletion.
+                                Toast.show({
+                                  text : "Restaurant deleted",
+                                  position : "bottom",
+                                  type : "danger",
+                                  duration : 2000
+                                });
+                              }.bind(this)
+                            );
+                          }.bind(this)
+                        );
+                      } },
+                      { text : "No" },
+                      { text : "Cancel", style : "cancel" }
+                    ],
+                    { cancelable : true }
+                  )
+              } } />
+           
+            </View>
+            </ScrollView>
+          }
+        />
+      </View>
+    </Root>
+
+  ); } /* End render(). */
+
+
+
+  /**
+   * Execute after the component mounts.
+   */
+  componentDidMount() {
+
+    // Block hardware back button on Android.
     BackHandler.addEventListener(
       "hardwareBackPress", () => { return true; }
     );
@@ -55,172 +128,133 @@ class ListScreen extends Component {
         } else {
           inRestaurants = JSON.parse(inRestaurants);
         }
-        this.setState({ listData : inRestaurants });
+
+        // AsyncStorage.setItem("restaurants",
+        // JSON.stringify(inRestaurants), function() {
+        //    this.setState({ listData : inRestaurants});
+        // }.bind(this)
+        // );
+        this.setState({ listData : inRestaurants});
+       
       }.bind(this)
     );
-    };
+
+  }; /* End componentDidMount() */
   
 
 
-    render() { 
-        return ( 
-            <Root>
-                <View style={styles.listScreenContainer}>
+} /* End ListScreen. */
 
-                    {/* El siguiente es el componente Add Restaurant CustomButton. 
-                    Es una configuración simple, pero el controlador onPress le ofrece algo nuevo para ver. 
-                    Como descubrirá al final de este capítulo, la pantalla de lista (así como la pantalla de agregar de la que hablaremos a continuación) se encuentran dentro de un Navegador de pila de navegación de reacción. Este navegador proporciona una manera de tener múltiples componentes, nuestra lista y agregar pantallas secundarias, apiladas una encima de la otra, de modo que solo una sea visible en un momento dado, y podemos llamar a algunos métodos para cambiar entre ellas. React Navigation agregará automáticamente un atributo de navegación a la colección de accesorios del componente de nivel superior. Ese atributo es un objeto que contiene algunos métodos que podemos llamar, uno de los cuales es navegar (). Lo que le proporcionamos es el nombre de la pantalla que incluye el StackNavigator que queremos mostrar, 
-                    y el navegador se encarga de cambiar entre ellos. */}
-                    <CustomButton
-                    text="Add Restaurant"
-                    width="94%"
-                    onPress={ () => { this.props.navigation.navigate("AddScreen"); } }
-                  />
-                 <FlatList style={styles.restaurantList} data={this.state.listData}
-                     renderItem={ ({item}) =>
-                     
-                     <View style={styles.restaurantContainer}>
-                       <Text style={styles.restaurantName}>{item.name}</Text>
-                            {/* Ahora, dentro de ese botón hay un controlador onPress, 
-                            y hay algunas cosas interesantes que suceden allí. 
-                            Primero, la API de alerta se usa para pedirle al usuario que confirme la eliminación. 
-                            Hay tres botones presentes: Sí, No y Cancelar. Al presionar cualquiera de ellos (o tocar fuera de la ventana emergente en Android, 
-                            gracias al atributo cancelable que se establece en verdadero), 
-                            se cerrará la ventana emergente sin que ocurra nada. 
-                            Es el código dentro del controlador del botón Sí que hace todo el trabajo, como era de esperar. */}
-                       <CustomButton text="Delete"
-                         onPress={() => {
-                             Alert.alert("Please confirm",
-                              "Are you sure you want to delete this restaurant?",
-                              [
-                                  {text: "yes", onPress:()=>{
-                                    // Ese trabajo se realiza en dos partes. 
-                                    // Primero, el restaurante debe ser eliminado. 
-                                    // Esto se hace mediante el uso de la API AsyncStorage, 
-                                    // para recuperar la lista de restaurantes. AsyncStorage es muy similar al almacenamiento local en un navegador web, ya que es un simple almacén de datos de valores clave. 
-                                    // Solo puede almacenar cadenas en él, por lo que tendrá que serializar y deserializar cualquier cosa hacia y desde una cadena, como un objeto JavaScript, como es el caso aquí. 
-                                    // Se llama al método getItem () para obtener el objeto debajo de los restaurantes clave. 
-                                    // Si todavía no hay ninguno, lo que significa que el usuario no ha creado ningún restaurante, se crea una matriz vacía. 
-                                    // De lo contrario, la cadena recuperada se deserializa en un objeto utilizando el conocido método JSON.parse () (y disponible en React Native code). 
-                                    // Después de eso, se trata simplemente de iterar la matriz y encontrar el restaurante con la clave 
-                                    // (que todos los restaurantes tienen) que coincida con la clave del elemento del elemento FlatList que se representa y eliminarlo de la matriz.
 
-                                        AsyncStorage.getItem("restaurants",
-                                            function(inError, inRestaurants) {
-                                              if (inRestaurants === null) {
-                                                inRestaurants = [ ];
-                                              } else {
-                                                inRestaurants = JSON.parse(inRestaurants);
-                                              }
-                                              // Find the right one to delete and splice it out.
-                                              for (let i = 0; i < inRestaurants.length; i++) {
-                                                const restaurant = inRestaurants[i];
-                                                if (restaurant.key === item.key) {
-                                                  inRestaurants.splice(i, 1);
-                                                  break;
-                                                }
-                                              }
-                                        //   Una vez eliminado de la matriz, el siguiente paso es volver a escribir la matriz en el almacenamiento, utilizando AsyncStorage.setItem (), utilizando JSON.stringify () 
-                                        //   para serializar la matriz de restaurantes en una cadena para el almacenamiento. Tenga en cuenta que tanto getItem () como setItem () 
-                                        //   son métodos asincrónicos, por lo que deberá proporcionar un controlador de devolución de llamada para cada uno, y la eliminación de la matriz y la llamada a 
-                                        //   setItem () se realiza en la devolución de llamada para getItem () llamada.
-                                        AsyncStorage.setItem("restaurants",
-                                          JSON.stringify(inRestaurants), function() {
-                                            // Set new state to update list.
-                                            this.setState({ listData : inRestaurants });
-                                            // Show toast message to confirm deletion.
-                                            Toast.show({
-                                              text : "Restaurant deleted",
-                                              position : "bottom",
-                                              type : "danger",
-                                              duration : 2000
-                                            });
-                                          }.bind(this)
-                                        );
-                                      }.bind(this)
-                                    );
-                                  } },
-                                 {text: "No"},{text:"Cancel", style:"cancel"}
-                              ],
-                              {cancelable:true}
-                             )
-                         }}
-                       />
-                     </View>
-
-                     }
-                 />
-                </View>
-            </Root>
-         );
-    }
-}
-
+/**
+ * #############################################################################
+ * Add screen.
+ * #############################################################################
+ */
 class AddScreen extends Component {
-    constructor(props) {
-        super(props);
-        // Al igual que con la pantalla de lista, 
-        // un constructor con una llamada al constructor de la superclase es el primero, 
-        // seguido de la creación de un objeto de estado. Los atributos coinciden con los criterios que puede ingresar sobre un restaurante, 
-        // excepto el atributo clave, que es una clave única que tendrá un restaurante agregado, que es solo un valor de marca de tiempo simple. 
-        // Esa no es la forma más sólida de generar una clave única para un objeto,
-        //  pero satisfará nuestras necesidades aquí perfectamente.
-        this.state = { name : "", cuisine : "", price : "", rating : "",
-        phone : "", address : "", webSite : "", delivery : "",
-        key : `r_${new Date().getTime()}` 
+
+
+  /**
+   * Constructor.
+   */
+  constructor(props) {
+
+    super(props);
+
+    this.state = {
+      name : "",
+      cuisine : "",
+      price : "",
+      rating : "",
+      phone : "",
+      address : "",
+      webSite : "",
+      delivery : "",
+      key : `r_${new Date().getTime()}`
     };
-    }
 
-//     En este punto, vale la pena señalar que este archivo RestaurantScreen.js que hemos estado viendo tiene dos componentes definidos (hasta ahora), 
-//     uno para la pantalla de lista y ahora este para la pantalla de agregar. 
-//     Esto, por supuesto, está bien, ya que puede crear tantas clases en un módulo 
-//     (que es lo que es RestaurantScreen.js) como desee, pero solo se exportará una, y verá que después de que hayamos terminado con El código de esta pantalla.
-//   Hablando de ese código, veamos el método render () 
-//   a continuación, y al igual que con la pantalla de lista, te dejaré leerlo, y 
-//   luego lo desglosaré (aunque por ahora, apuesto a que puedes resolverlo) esto casi solo)
-    render() { 
-        return ( 
-            <ScrollView style={styles.addScreenContainer}>
-              <View style={styles.addScreenInnerContainer}>
-                  <View style={styles.addScreenFormContainer}>
-                    <CustomTextInput label="Name" maxLength={20}
-                        stateHolder={this} stateFieldName="name"
-                    />
-                    <Text style={styles.fieldLabel}>Cuisine</Text>
-                <View style={styles.pickerContainer}>
-                {/* Ahora, tenemos tres contenedores de Vista en el diseño, y en este punto, 
-                podemos comenzar a agregar componentes de entrada, 
-                el primero de los cuales es un componente CustomTextInput. 
-                Esto es para el nombre del restaurante, por lo que proporcionamos el texto de etiqueta apropiado a través del accesorio de etiqueta, 
-                le decimos cuál es la longitud máxima de entrada (20) y le decimos qué objeto almacena el estado de este componente 
-                (esto, que es una referencia a la instancia de la clase AddScreen en sí, y React Native sabe buscar un atributo de estado en él) 
-                y el atributo en ese objeto de estado, nombre. */}
+  } /* End constructor. */
 
-                    <Picker style={styles.picker} prompt="Cuisine"
-                    selectedValue={this.state.cuisine}
-                    onValueChange={ 
-                      (inItemValue) => this.setState({ cuisine : inItemValue }) }
-                    >
-                    {/* Después de eso viene la entrada del tipo de cocina del restaurante. 
-                    Esto se hace a través de un componente Picker, uno que viene con React Native. 
-                    Es un simple control giratorio en iOS y un cuadro de diálogo emergente con una lista desplazable de opciones en las que se puede hacer clic en Android, 
-                    cuyo objetivo es obligar al usuario a seleccionar una opción de una lista de opciones disponibles. Pero, simplemente poner un componente Selector no sería suficiente, 
-                    porque el usuario no sabría para qué es necesariamente, por lo que agregaremos un componente de Texto antes como etiqueta, 
-                    y a ese componente de Texto, aplicaremos este estilo : */}
-                    <Picker.Item label="" value=""/>
-                    <Picker.Item label="Algerian" value="Algerian" />
-                    <Picker.Item label="American" value="American" />
-                    <Picker.Item label="Other" value="Other" />
-                    </Picker>
-                </View>
-                {/* La definición de Picker en sí es, creo, bastante obvia. 
-                El accesorio de solicitud es solo para Android, porque cuando se hace clic en el Selector, 
-                Android abre una ventana emergente para que el usuario lo use para hacer su selección, y este accesorio garantiza que la etiqueta en la pantalla de agregar se replique en esa ventana emergente. 
-                El valor seleccionado selecciona el selector con el atributo de objeto de estado apropiado, y onValueChange se encarga de actualizar ese valor cuando cambia. Luego,
-                 el Selector obtiene algunos componentes secundarios definidos debajo, Selector. Componentes del elemento para ser precisos, en los que cada uno recibe una etiqueta y un valor,
-                  siendo este último el que se establecerá en el estado. En el siguiente código, he recortado un poco los elementos de la lista con las elipses, 
-                solo para ahorrar un poco de espacio, pero confía en mí, están incluidos en el código real. */}
-                { /* ########## Price ########## */ }
+
+  /**
+   * Render this component.
+   */
+  render() { 
+    return (
+
+    <ScrollView style={styles.addScreenContainer}>
+      <View style={styles.addScreenInnerContainer}>
+        <View style={styles.addScreenFormContainer}>
+          { /* ########## Name ########## */ }
+          <CustomTextInput
+            label="Name"
+            maxLength={20}
+            stateHolder={this}
+            stateFieldName="name"
+          />
+          { /* ########## Cuisine ########## */ }
+          <Text style={styles.fieldLabel}>Cuisine</Text>
+          <View style={styles.pickerContainer}>
+            <Picker
+              style={styles.picker}
+              prompt="Cuisine"
+              selectedValue={this.state.cuisine}
+              onValueChange={
+                (inItemValue) => this.setState({ cuisine : inItemValue })
+              }
+            >
+              <Picker.Item label="" value="" />
+              <Picker.Item label="Algerian" value="Algerian" />
+              <Picker.Item label="American" value="American" />
+              <Picker.Item label="BBQ" value="BBQ" />
+              <Picker.Item label="Belgian" value="Belgian" />
+              <Picker.Item label="Brazilian" value="Brazilian" />
+              <Picker.Item label="British" value="British" />
+              <Picker.Item label="Cajun" value="Cajun" />
+              <Picker.Item label="Canadian" value="Canadian" />
+              <Picker.Item label="Chinese" value="Chinese" />
+              <Picker.Item label="Cuban" value="Cuban" />
+              <Picker.Item label="Egyptian" value="Egyptian" />
+              <Picker.Item label="Filipino" value="Filipino" />
+              <Picker.Item label="French" value="French" />
+              <Picker.Item label="German" value="German" />
+              <Picker.Item label="Greek" value="Greek" />
+              <Picker.Item label="Haitian" value="Haitian" />
+              <Picker.Item label="Hawaiian" value="Hawaiian" />
+              <Picker.Item label="Indian" value="Indian" />
+              <Picker.Item label="Irish" value="Irish" />
+              <Picker.Item label="Italian" value="Italian" />
+              <Picker.Item label="Japanese" value="Japanese" />
+              <Picker.Item label="Jewish" value="Jewish" />
+              <Picker.Item label="Kenyan" value="Kenyan" />
+              <Picker.Item label="Korean" value="Korean" />
+              <Picker.Item label="Latvian" value="Latvian" />
+              <Picker.Item label="Libyan" value="Libyan" />
+              <Picker.Item label="Mediterranean" value="Mediterranean" />
+              <Picker.Item label="Mexican" value="Mexican" />
+              <Picker.Item label="Mormon" value="Mormon" />
+              <Picker.Item label="Nigerian" value="Nigerian" />
+              <Picker.Item label="Other" value="Other" />
+              <Picker.Item label="Peruvian" value="Peruvian" />
+              <Picker.Item label="Polish" value="Polish" />
+              <Picker.Item label="Portuguese" value="Portuguese" />
+              <Picker.Item label="Russian" value="Russian" />
+              <Picker.Item label="Salvadorian" value="Salvadorian" />
+              <Picker.Item label="Sandwiche Shop" value="Sandwiche Shop" />
+              <Picker.Item label="Scottish" value="Scottish" />
+              <Picker.Item label="Seafood" value="Seafood" />
+              <Picker.Item label="Spanish" value="Spanish" />
+              <Picker.Item label="Steak House" value="Steak House" />
+              <Picker.Item label="Sushi" value="Sushi" />
+              <Picker.Item label="Swedish" value="Swedish" />
+              <Picker.Item label="Tahitian" value="Tahitian" />
+              <Picker.Item label="Thai" value="Thai" />
+              <Picker.Item label="Tibetan" value="Tibetan" />
+              <Picker.Item label="Turkish" value="Turkish" />
+              <Picker.Item label="Welsh" value="Welsh" />
+            </Picker>
+          </View>
+          { /* ########## Price ########## */ }
           <Text style={styles.fieldLabel}>Price</Text>
           <View style={styles.pickerContainer}>
             <Picker
@@ -272,24 +306,14 @@ class AddScreen extends Component {
             stateHolder={this}
             stateFieldName="address"
           />
-           { /* ########## Web Site ########## */ }
+          { /* ########## Web Site ########## */ }
           <CustomTextInput
             label="Web Site"
             maxLength={20}
             stateHolder={this}
             stateFieldName="webSite"
           />
-            {/* Sin embargo, ¿se dio cuenta de que ninguno de estos campos es obligatorio? 
-            Bueno, no lo son! De hecho, puede crear un restaurante sin nombre ni datos, 
-            lo que lo hace prácticamente inútil. Sin embargo, hice esto a propósito, 
-            solo para poder sugerir esto: ¿por qué no te tomas un pequeño descanso aquí y 
-            ves si puedes descubrir cómo hacer que los campos sean obligatorios? 
-            ¿React Native ofrece algún tipo de indicador de "hacer que este campo sea obligatorio"? 
-            ¿O tiene que escribir algún código, digamos, en el botón Guardar, que veremos en breve, para hacer la validación y mostrar un mensaje si falta algo 
-            (eso puede o no ser una pista)? ¿Existen en realidad múltiples formas de hacerlo entre las que puede elegir, tal vez incluyendo algunas bibliotecas de terceros? 
-            He dejado esto como un ejercicio para ti, querido lector. */}
-
-            { /* ########## Delivery ########## */ }
+          { /* ########## Delivery ########## */ }
           <Text style={styles.fieldLabel}>Delivery?</Text>
           <View style={styles.pickerContainer}>
             <Picker
@@ -305,21 +329,8 @@ class AddScreen extends Component {
               <Picker.Item label="No" value="No" />
             </Picker>
           </View>
-         </View>
-         { /* ########## Buttons ########## */ }
-
-         {/* Inside this View goes two CustomButton components, 
-         for Cancel and Save, respectively. The buttons are sized to 44% the width of the screen, 
-         which leaves 12% of the width for spacing. Because the parent View is laying these out centered in a row, 
-         that means 4% of the width of the screen will be on either side of the buttons and also between them 
-         (all must total 100%, after all) */}
-         {/* El botón Cancelar no tiene mucho trabajo que hacer: simplemente regresa a la pantalla de la lista, haciendo una llamada a navigation () en el atributo props.navigation del componente de nivel superior, tal como lo vio en el botón Agregar restaurante controlador onPress.
-        Sin embargo, el botón Guardar tiene más trabajo por hacer, a saber, guardar el restaurante para el que el usuario acaba de ingresar información. 
-        Para hacer eso, primero debemos recuperar la lista de restaurantes de AsyncStorage, tal como lo vio en la pantalla de la lista. Una vez hecho esto, 
-        todo lo que tenemos que hacer es insertar el objeto de estado para el componente de nivel superior en la matriz
-        de restaurantes, porque contiene todos los datos que estamos guardando, y los vuelve a escribir en AsyncStorage. 
-        Finalmente, navegamos de regreso a la pantalla de la lista, a través de nuestro StackNavigator, y React Native se encargará de actualizar la lista, en virtud del método componentDidMount ()
-        de la activación de componentes de la pantalla de la lista nuevamente. */}
+        </View>
+        { /* ########## Buttons ########## */ }
         <View style={styles.addScreenButtonsContainer}>
           <CustomButton
             text="Cancel"
@@ -342,19 +353,34 @@ class AddScreen extends Component {
                   inRestaurants.push(this.state);
                   AsyncStorage.setItem("restaurants",
                     JSON.stringify(inRestaurants), function() {
-                      this.props.navigation.navigate("ListScreen");
+                      this.setState({listData: inRestaurants},() => {
+                        console.log(this.state.listData)
+                      })  
+                      // this.setState({listData:inRestaurants});
+                      // this.props.navigation.push("ListScreen");
+                      this.props.navigation.replace("ListScreen");
+                      Toast.show({
+                                  text : "Restaurant save",
+                                  position : "bottom",
+                                  type : "success",
+                                  duration : 2000
+                                });
+                      
                     }.bind(this)
                   );
                 }.bind(this)
               );
             } }
           />
-          </View>
-              </View>
-            </ScrollView>
-         );
-    }
-}
+        </View>
+      </View>
+    </ScrollView>
+
+  ); } /* End render(). */
+
+
+} /* End AddScreen. */
+
 
 const styles = StyleSheet.create({
     //     Como mencioné anteriormente, el diseño es un tema que voy a abordar en detalle en el Capítulo 4, pero por ahora, le diré que esta configuración de estilo garantiza que esta Vista llene el
