@@ -5,6 +5,9 @@ import { Constants } from "expo";
 import { createStackNavigator, StackView } from '@react-navigation/stack';
 import AsyncStorage from '@react-native-community/async-storage';
 
+// lootie
+import LottieView from "lottie-react-native";
+
 // importaciones externas 
 
 import CustomButton from '../Components/CustomButton';
@@ -78,6 +81,13 @@ const getRandom = (inMin, inMax) => {
      super(props);
      this.state = {  }
    }
+
+   componentDidMount() {
+    this.animation.play();
+    // Or set a specific startFrame and endFrame with:
+    // this.animation.play(30, 120);
+  }
+
    render() { 
      return (  
        <View style={styles.decisionTimeScreenContainer}>
@@ -126,7 +136,14 @@ const getRandom = (inMin, inMax) => {
              );
           }}
           >
-            <Image source={require("../images/its-decision-time.android.png")}/>
+            {/* <Image source={require("../images/its-decision-time.android.png")}/> */}
+            <LottieView 
+            ref={animation => {
+              this.animation = animation
+            }}
+            style={styles.lottieAnimation}
+            source={require('../images/food-carousel.json')} 
+            />
             <Text style={{padding:20}}>(Click the food to get going)</Text>
           </TouchableOpacity>
        </View>
@@ -172,6 +189,11 @@ const styles = StyleSheet.create({
     alignItems : "center",
     justifyContent : "center"
   },
+  lottieAnimation:{
+    width:350,
+    height:350
+    
+  }
 
 })
  
