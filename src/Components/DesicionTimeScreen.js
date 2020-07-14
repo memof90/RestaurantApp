@@ -133,47 +133,27 @@ const getRandom = (inMin, inMax) => {
      );
    }
  }
-  
- export default DecisionTimeScreen;
 
 
-
-
-
-// export default function DesicionScreens() {
-//         return (  
-//           //   <View style={styles.settingScreen}>
-//           //   <Text>hola desde DesicionScreen</Text>
-//           // </View>
-//           <View style={{flex:1}}>
-//             <View style={{flex:5, backgroundColor: "red"}}/>
-//             <View style={{flex:2, backgroundColor: "green"}}/>
-//             <View style={{flex:3, backgroundColor: "blue"}}/>
-//           </View>
-//         );
-    
-// }
-
-/**
+ /**
  * #############################################################################
  * Styles.
  * #############################################################################
  */
 
 const styles = StyleSheet.create({
-
-  decisionTimeScreenContainer : {
-    flex : 1,
-    alignItems : "center",
-    justifyContent : "center"
-  },
-
-  decisionTimeScreenTouchable : {
-    alignItems : "center",
-    justifyContent : "center"
-  },
-
-})
- 
-
-
+  
+    decisionTimeScreenContainer : {
+      flex : 1,
+      alignItems : "center",
+      justifyContent : "center"
+    },
+  
+    decisionTimeScreenTouchable : {
+      alignItems : "center",
+      justifyContent : "center"
+    },
+  
+  })
+  
+ export default DecisionTimeScreen;
