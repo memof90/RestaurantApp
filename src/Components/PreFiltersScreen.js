@@ -366,7 +366,7 @@ const styles = StyleSheet.create({
           },
           android : { }
         })
-      
+      }
 
 })
 
