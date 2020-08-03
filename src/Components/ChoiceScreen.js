@@ -104,6 +104,12 @@ class ChoiceScreen extends Component {
                       that {chosenRestaurant.delivery === "Yes" ? "DOES" : "DOES NOT"} deliver.
                     </Text>
                   </View>
+                  {/* Este modal contiene dos componentes CustomButton, el primero utilizado cuando
+                  el usuario acepta este restaurante, este último cuando alguien quiere vetar la elección.
+                  Para el botón Aceptar, el controlador de eventos onPress actualiza los atributos seleccionadosVisible
+                   y vetoVisible a falso en el objeto de estado, lo que hace que React Native oculte ambos modos.
+                  (Recuerde que existen, independientemente de si están actualmente visibles). 
+                  Luego, navega por la aplicación a la pantalla Post-Choice, que se trata más adelante en este capítulo. */}
                   <CustomButton
                     text="Accept"
                     width="94%"
@@ -112,6 +118,13 @@ class ChoiceScreen extends Component {
                       this.props.navigation.navigate("PostChoiceScreen");
                     } }
                   />
+                  {/* El segundo CustomButton obtiene su texto de etiqueta 
+                  del atributo vetoText del objeto de estado 
+                  y recibe el valor de su accesorio deshabilitado del atributo vetoDisabled en estado. 
+                  Verá el código que establece esos valores más adelante, pero el punto es que deben ser dinámicos
+                   y, por lo tanto, vincularlos con los atributos de estado. 
+                   El controlador onPress simplemente oculta este Modal
+                    y muestra el siguiente (para vetar) por estado mutante */}
                   <CustomButton
                     text={this.state.vetoText}
                     width="94%"
@@ -135,8 +148,24 @@ class ChoiceScreen extends Component {
                 <View style={styles.vetoContainerInner}>
                   <Text style={styles.vetoHeadline}>Who's vetoing?</Text>
                   <ScrollView style={styles.vetoScrollViewContainer}>
+                  {/* Ahora, aquí es donde se pone interesante: un ScrollView debe tener hijos, por supuesto, pero ¿cómo se toma una matriz
+                   (participantes, en este caso) y se genera esa lista de hijos dinámicamente? Bueno, una forma de hacerlo es usar el método map ()
+                    disponible en matrices de JavaScript. Este método le permite tomar cada elemento de la matriz, ejecutarlo a través de una función 
+                    y devolver algo. En este caso, lo que devolveremos es una buena configuración del componente React Native. Al ajustar la llamada map () 
+                    entre llaves, JSX sabe que esta es una expresión, y la salida de la expresión se insertará en
+                  lugar de la expresion. En este caso, la expresión es el resultado de ejecutar la función proporcionada una vez para cada miembro de la matriz. 
+                  Por lo tanto, terminamos con uno o más elementos secundarios para ScrollView. */}
                     { participants.map((inValue) => {
                         if (inValue.vetoed === "no") {
+                            {/* ¿Qué ejecuta la función map () para cada elemento en el retorno de la matriz? Como elemento de nivel superior,
+                             devuelve una TouchableOpacity, que has visto antes. Aquí, sin embargo, 
+                             notará que tiene un accesorio clave, cuyo valor se toma del atributo clave de inValue, que es el objeto para 
+                             la siguiente persona en la matriz de participantes. Ese valor clave no es realmente necesario para hacer el trabajo en este Modal, pero sin él,
+                              recibirá una advertencia de que cada elemento en un iterador debe tener una clave. Por lo tanto, tenemos un accesorio clave, aunque no es obligatorio. */}
+{/*                          
+                        Para cada elemento de la matriz de participantes, verificamos su atributo vetado. Si no es así, esta persona todavía tiene veto y,
+                         por lo tanto, será incluida en la lista. De lo contrario, él o ella no lo serán. Una vez que determinamos que se incluirá a la persona,
+                          se define TouchableOpacity, */}
                           return <TouchableOpacity key={inValue.key}
                             style={ styles.vetoParticipantContainer }
                             onPress={ () => {
@@ -165,6 +194,13 @@ class ChoiceScreen extends Component {
                                   break;
                                 }
                               }
+                            //   como penúltimo paso, tenemos que actualizar el objeto de estado para reflejar todo este trabajo. 
+                            //   Eso significa establecer selectVisible en false, para asegurarse de que Modal esté oculto
+                            //    (ya lo estaría, pero una vez más, una pequeña programación defensiva no es algo malo) 
+                            //    y lo mismo ocurre con el atributo vetoVisible. La etiqueta para el botón Veto se establece 
+                            //    a través del atributo vetoText en un valor buttonLabel determinado anteriormente. 
+                            //    El atributo vetoDisabled es el inverso
+                            //  del valor de la variable vetoStillAvailable, que también se estableció en el paso anterior.
                               // Update state.
                               this.setState({
                                 selectedVisible : false,
@@ -208,6 +244,24 @@ class ChoiceScreen extends Component {
             <FlatList
               style={styles.choiceScreenListContainer}
               data={this.state.participantsList}
+            //   cuando React Native ve el valor de este cambio de utilería, 
+            //   vuelve a representar la lista, independientemente de si los datos cambiaron. 
+            //   Eso es importante, porque cuando alguien veta la elección de un restaurante, 
+            //   actualizamos el atributo vetado del objeto en la matriz Lista de participantes 
+            //   en el objeto de estado, pero a veces React Native no puede notar cambios en 
+            //   los datos en el estado cuando se realizan cambios en sus atributos. Si regresa
+            //    y mira el código en el botón Veto, notará que la llamada a setState () no incluye la configuración de los participantesLista.
+            //     Haciendo así que tampoco haría que React Native vea el cambio en el atributo vetado. Pensar
+            //     de esta manera: React Native es fantástico al notar cambios en los atributos 
+            //     de estado que son directamente un atributo de estado, pero no siempre es tan bueno para notar cambios 
+            //     en los atributos de los objetos que forman parte de una colección que es directamente un atributo de estado
+            //      . Señale state.participants ¿Enumere una matriz completamente nueva en el código del controlador
+            //       onPress del botón Veto? React Native lo notará y volverá a procesar la lista.
+            //        ¿Cambiar un atributo de un objeto dentro de la matriz que state.participantsList 
+            //        ya señala? Reaccionar nativo no se dará cuenta. Entonces, tienes que darle un pequeño empujón,
+            //         por así decirlo, con el accesorio extraData. No importa lo que almacene en el accesorio, 
+            //         siempre que cambie. Eso es suficiente para obligar a React Native a volver a representar 
+            //         la lista, y eso es lo que necesitamos aquí.
               extraData={this.state.participantsListRefresh}
               renderItem={ ({item}) =>
                 <View style={styles.choiceScreenListItem}>
@@ -291,10 +345,17 @@ const styles = StyleSheet.create({
         fontWeight : "bold"
       },
     
+        // Esa es solo una altura arbitraria que determiné mediante prueba y 
+        // error que termina ocupando principalmente el área disponible en el Modal 
+        // (una vez que se consideran el título y el botón).
       vetoScrollViewContainer : {
         height : "50%"
       },
     
+        // Esto inserta algo de espacio encima y debajo del nombre de cada persona en la lista. 
+        // También significa que el objetivo táctil para el usuario es una cómoda altura de 40 píxeles, 
+        // por lo que la mayoría de los usuarios no tendrán problemas para tocar el nombre correcto 
+        // y no golpear a otro por error.
       vetoParticipantContainer : {
         paddingTop : 20,
         paddingBottom : 20

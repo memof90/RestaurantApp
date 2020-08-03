@@ -18,3 +18,11 @@ export const getRandom = (inMin, inMax) => {
   };
 
   export default getRandom;
+
+//   getRandom () desde el comienzo del Capítulo 3. 
+//   Se elige un número aleatorio, luego el objeto asociado con ese índice en la matriz
+//    de FiltrosRestaurantes se almacena en elegidoRestaurante (una de las variables globales del módulo de antes, 
+//     recuerde), y luego se realiza una llamada a setState (), configurando selectedVisible a verdadero, 
+//     para mostrar ese modal.
+// ¡Y eso es todo lo que hay en la pantalla Elección y sus modos asociados
+// ! Solo tenemos una pantalla más para mirar y, por supuesto, es lo que el usuario ve después de aceptar este restaurante.
