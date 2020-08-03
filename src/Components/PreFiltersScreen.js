@@ -12,6 +12,11 @@ import CustomButton from '../Components/CustomButton';
 // PreFiltersScreen) es la pantalla que ve el usuario después de seleccionar quién irá, 
 // y les permite filtrar los restaurantes para su consideración
 
+/**
+ * The list of FILTERED restaurants from which the app will choose.
+ */
+let filteredRestaurants = null;
+
 class PrefiltersScreen extends Component {
     constructor(props) {
         super(props);
@@ -347,7 +352,21 @@ const styles = StyleSheet.create({
             marginTop : 4
           }
         })
-      }
+      },
+      picker : {
+        ...Platform.select({
+          ios : {
+            width : "96%",
+            borderRadius : 8,
+            borderColor : "#c0c0c0",
+            borderWidth : 2,
+            marginLeft : 10,
+            marginBottom : 20,
+            marginTop : 4
+          },
+          android : { }
+        })
+      
 
 })
 

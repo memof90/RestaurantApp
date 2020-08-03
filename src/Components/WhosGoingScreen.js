@@ -9,6 +9,11 @@ import AsyncStorage from '@react-native-community/async-storage';
 
 import CustomButton from '../Components/CustomButton';
 
+/**
+ * The list of people who are participating.
+ */
+let participants = null;
+
 class WhosGoingScreen extends Component {
     constructor(props) {
         super(props);
