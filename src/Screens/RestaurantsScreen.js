@@ -140,7 +140,33 @@ class ListScreen extends Component {
     );
 
   }; /* End componentDidMount() */
+  // Prevenir React setState en un Componente desmontado
+  componentWillUnmount(){
+    BackHandler.removeEventListener(
+      "hardwareBackPress", () => { return true; }
+    );
+    
+        // Get list of restaurants.
+        AsyncStorage.getItem("restaurants",
+        function(inError, inRestaurants) {
+          if (inRestaurants === null) {
+            inRestaurants = [ ];
+          } else {
+            inRestaurants = JSON.parse(inRestaurants);
+          }
   
+          // AsyncStorage.setItem("restaurants",
+          // JSON.stringify(inRestaurants), function() {
+          //    this.setState({ listData : inRestaurants});
+          // }.bind(this)
+          // );
+          this.setState({ listData : !inRestaurants});
+         
+        }.bind(this)
+      );
+
+    
+  }
 
 
 } /* End ListScreen. */
