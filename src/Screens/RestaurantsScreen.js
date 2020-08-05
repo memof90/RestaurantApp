@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { Alert, BackHandler, FlatList, Picker, Platform, ScrollView,StyleSheet, Text, View} from "react-native";
+import { Alert, BackHandler, FlatList, Picker, Platform, ScrollView,StyleSheet, Text, View,Keyboard} from "react-native";
 import AsyncStorage from '@react-native-community/async-storage';
 import Constants from 'expo-constants';
 import { createStackNavigator, StackView } from '@react-navigation/stack';
@@ -115,6 +115,16 @@ class ListScreen extends Component {
    */
   componentDidMount() {
 
+    this.keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow'
+      // this._keyboardDidShow,
+    );
+
+    this.keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide'
+      // this._keyboardDidHide,
+    );
+
     // Block hardware back button on Android.
     BackHandler.addEventListener(
       "hardwareBackPress", () => { return true; }
@@ -142,6 +152,10 @@ class ListScreen extends Component {
   }; /* End componentDidMount() */
   // Prevenir React setState en un Componente desmontado
   componentWillUnmount(){
+
+    this.keyboardDidShowListener.remove();
+    this.keyboardDidHideListener.remove();
+
     BackHandler.removeEventListener(
       "hardwareBackPress", () => { return true; }
     );
@@ -167,6 +181,14 @@ class ListScreen extends Component {
 
     
   }
+ teclado
+  // _keyboardDidShow() {
+  //   alert('abrio teclado');
+  // }
+
+  // _keyboardDidHide() {
+  //   alert('cerro teclado');
+  // }
 
 
 } /* End ListScreen. */
@@ -217,6 +239,7 @@ class AddScreen extends Component {
             maxLength={20}
             stateHolder={this}
             stateFieldName="name"
+            onSubmitEditing={Keyboard.dismiss}
           />
           { /* ########## Cuisine ########## */ }
           <Text style={styles.fieldLabel}>Cuisine</Text>
@@ -324,6 +347,7 @@ class AddScreen extends Component {
             maxLength={20}
             stateHolder={this}
             stateFieldName="phone"
+            onSubmitEditing={Keyboard.dismiss}
           />
           { /* ########## Address ########## */ }
           <CustomTextInput
@@ -331,6 +355,7 @@ class AddScreen extends Component {
             maxLength={20}
             stateHolder={this}
             stateFieldName="address"
+            onSubmitEditing={Keyboard.dismiss}
           />
           { /* ########## Web Site ########## */ }
           <CustomTextInput
@@ -338,6 +363,7 @@ class AddScreen extends Component {
             maxLength={20}
             stateHolder={this}
             stateFieldName="webSite"
+            onSubmitEditing={Keyboard.dismiss}
           />
           { /* ########## Delivery ########## */ }
           <Text style={styles.fieldLabel}>Delivery?</Text>
@@ -361,6 +387,7 @@ class AddScreen extends Component {
           <CustomButton
             text="Cancel"
             width="44%"
+            // 35% android
             onPress={
               () => { this.props.navigation.navigate("ListScreen"); }
             }
@@ -368,6 +395,7 @@ class AddScreen extends Component {
           <CustomButton
             text="Save"
             width="44%"
+            // 35% android
             onPress={ () => {
               AsyncStorage.getItem("restaurants",
                 function(inError, inRestaurants) {

@@ -25,6 +25,7 @@ class CustomButton extends Component {
 
 // El atributo de estilo final es backgroundColor, y aquí usamos algo de lógica para determinar si el botón debe estar atenuado (deshabilitado es verdadero) o si debe ser azul (activo, deshabilitado es falso o no suministrado). Una lógica similar se usa a continuación en el accesorio onPress, de modo que solo un botón activo responde al tacto.
                 style={ [
+                    // margin : 30 android
                 { padding : 10, height : 60, borderRadius : 8, margin : 10, width : width,
                 backgroundColor :
                 disabled != null && disabled === "true" ? "#e0e0e0" : "#303656",
