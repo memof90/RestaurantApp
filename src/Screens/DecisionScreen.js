@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {Alert, BackHandler, Button, FlatList, Image, Modal, Picker,Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
-import { CheckBox } from "native-base";
+import { CheckBox,Icon } from "native-base";
 import Constants from 'expo-constants';
 import { createStackNavigator, StackView } from '@react-navigation/stack';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -1045,7 +1045,14 @@ const styles = StyleSheet.create({
     borderWidth : 2,
     borderColor : "#000000",
     padding : 10,
-    width : "96%"
+    width : "96%",
+    backgroundColor: '#222831',
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 1,
   },
 
   postChoiceDetailsRowContainer : {
@@ -1058,11 +1065,13 @@ const styles = StyleSheet.create({
   postChoiceDetailsLabel : {
     width : 70,
     fontWeight : "bold",
-    color : "#ff0000"
+    color : "#ffffff"
   },
 
   postChoiceDetailsValue : {
-    width : 300
+    width : 300,
+    color: "white"
+
   }
 
 });

@@ -116,13 +116,13 @@ class ListScreen extends Component {
   componentDidMount() {
 
     this.keyboardDidShowListener = Keyboard.addListener(
-      'keyboardDidShow'
-      // this._keyboardDidShow,
+      'keyboardDidShow',
+      this._keyboardDidShow,
     );
 
     this.keyboardDidHideListener = Keyboard.addListener(
-      'keyboardDidHide'
-      // this._keyboardDidHide,
+      'keyboardDidHide',
+      this._keyboardDidHide,
     );
 
     // Block hardware back button on Android.
@@ -155,40 +155,16 @@ class ListScreen extends Component {
 
     this.keyboardDidShowListener.remove();
     this.keyboardDidHideListener.remove();
-
-    BackHandler.removeEventListener(
-      "hardwareBackPress", () => { return true; }
-    );
-    
-        // Get list of restaurants.
-        AsyncStorage.getItem("restaurants",
-        function(inError, inRestaurants) {
-          if (inRestaurants === null) {
-            inRestaurants = [ ];
-          } else {
-            inRestaurants = JSON.parse(inRestaurants);
-          }
-  
-          // AsyncStorage.setItem("restaurants",
-          // JSON.stringify(inRestaurants), function() {
-          //    this.setState({ listData : inRestaurants});
-          // }.bind(this)
-          // );
-          this.setState({ listData : !inRestaurants});
-         
-        }.bind(this)
-      );
-
-    
+        
   }
- teclado
-  // _keyboardDidShow() {
-  //   alert('abrio teclado');
-  // }
+//  teclado
+  _keyboardDidShow() {
+    console.log('teclado abrio');
+  }
 
-  // _keyboardDidHide() {
-  //   alert('cerro teclado');
-  // }
+  _keyboardDidHide() {
+    console.log('teclado cerro');
+  }
 
 
 } /* End ListScreen. */
