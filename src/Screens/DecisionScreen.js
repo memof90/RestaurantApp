@@ -652,6 +652,13 @@ class ChoiceScreen extends React.Component {
                       <Text style={styles.vetoParticipantName}>
                         {inValue.firstName + " " + inValue.lastName}
                       </Text>
+                      <LottieView 
+                          ref={animation => {
+                                this.animation = animation
+                              }}
+                              style={styles.lottieAnimationTree}
+                              source={require('../images/people-morph-flow.json')} 
+                        />
                     </TouchableOpacity>;
                   }
                 })
@@ -704,6 +711,20 @@ class ChoiceScreen extends React.Component {
 
   ); } /* End render(). */
 
+  componentDidMount(){
+    this.initAnimation();
+    
+  }
+
+  initAnimation(){
+    if(!this.animation){
+      setTimeout(() => {
+        this.initAnimation();
+      }, 100);
+    } else {
+      this.animation.play();
+    }
+  }
 
 } /* End ChoiceScreen. */
 
@@ -988,7 +1009,6 @@ const styles = StyleSheet.create({
     alignItems : "center",
     alignContent : "center"
   },
-
   vetoHeadlineContainer : {
     paddingBottom : 40
   },
@@ -1008,7 +1028,14 @@ const styles = StyleSheet.create({
   },
 
   vetoParticipantName : {
-    fontSize : 24
+    fontSize : 24, 
+  },
+
+  lottieAnimationTree: {
+      marginTop: 20,
+      width: 300,
+      height: 250,
+      alignItems: "center",
   },
 
   vetoButtonContainer : {
