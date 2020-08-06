@@ -734,6 +734,13 @@ class PostChoiceScreen extends React.Component {
     <View style={styles.postChoiceScreenContainer}>
 
       <View>
+      <LottieView 
+        ref={animation => {
+              this.animation = animation
+            }}
+            style={styles.lottieAnimationTwo}
+            source={require('../images/delivery.json')} 
+      />
         <Text style={styles.postChoiceHeadline}>Enjoy your meal!</Text>
       </View>
 
@@ -797,7 +804,7 @@ class PostChoiceScreen extends React.Component {
 
       </View>
 
-      <View style={{ paddingTop:80}}>
+      <View style={{ paddingTop:40}}>
       <Button
         title="All Done"
         onPress={ () => this.props.navigation.navigate("DecisionTimeScreen") }
@@ -807,6 +814,10 @@ class PostChoiceScreen extends React.Component {
     </View>
 
   ); } /* End render(). */
+
+  componentDidMount(){
+    this.animation.play();
+  }
 
 
 } /* End P
@@ -1038,7 +1049,7 @@ const styles = StyleSheet.create({
 
   postChoiceHeadline : {
     fontSize : 32,
-    paddingBottom : 80
+    paddingBottom : 40
   },
 
   postChoiceDetailsContainer : {
@@ -1071,6 +1082,11 @@ const styles = StyleSheet.create({
   postChoiceDetailsValue : {
     width : 300,
     color: "white"
+
+  },
+  lottieAnimationTwo:{
+
+    width: 250
 
   }
 

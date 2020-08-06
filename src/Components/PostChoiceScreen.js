@@ -9,6 +9,9 @@ import AsyncStorage from '@react-native-community/async-storage';
 
 import CustomButton from '../Components/CustomButton';
 
+// lootie
+import LottieView from "lottie-react-native";
+
 /**
  * The restaurant that is ultimately chosen.
  */
@@ -28,6 +31,13 @@ class PostChoiceScreen extends Component {
             <View style={styles.postChoiceScreenContainer}>
 
             <View>
+                <LottieView 
+            ref={animation => {
+                  this.animation = animation
+                }}
+                style={styles.lottieAnimationTwo}
+                source={require('../images/delivery.json')} 
+             />
               <Text style={styles.postChoiceHeadline}>Enjoy your meal!</Text>
             </View>
       
@@ -91,7 +101,7 @@ class PostChoiceScreen extends Component {
       
             </View>
       
-            <View style={{ paddingTop:80}}>
+            <View style={{ paddingTop:40}}>
             <Button
               title="All Done"
               onPress={ () => this.props.navigation.navigate("DecisionTimeScreen") }
@@ -105,30 +115,8 @@ class PostChoiceScreen extends Component {
 
 // define your styles
 const styles = StyleSheet.create({
-    choiceScreenHeadline : {
-        fontSize : 30,
-        marginTop : 20,
-        marginBottom : 20
-      },
-    
-      choiceScreenListContainer : {
-        width : "94%"
-      },
-    
-      choiceScreenListItem : {
-        flexDirection : "row",
-        marginTop : 4,
-        marginBottom : 4,
-        borderColor : "#e0e0e0",
-        borderBottomWidth : 2,
-        alignItems : "center"
-      },
-    
-      choiceScreenListItemName : {
-        flex : 1
-      },
-    
-      postChoiceScreenContainer : {
+  
+       postChoiceScreenContainer : {
         flex : 1,
         justifyContent : "center",
         alignItems : "center",
@@ -137,14 +125,21 @@ const styles = StyleSheet.create({
     
       postChoiceHeadline : {
         fontSize : 32,
-        paddingBottom : 80
+        paddingBottom : 40
       },
     
       postChoiceDetailsContainer : {
         borderWidth : 2,
         borderColor : "#000000",
         padding : 10,
-        width : "96%"
+        width : "96%",
+        backgroundColor: '#222831',
+        borderRadius: 10,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.8,
+        shadowRadius: 2,
+        elevation: 1,
       },
     
       postChoiceDetailsRowContainer : {
@@ -157,11 +152,18 @@ const styles = StyleSheet.create({
       postChoiceDetailsLabel : {
         width : 70,
         fontWeight : "bold",
-        color : "#ff0000"
+        color : "#ffffff"
       },
     
       postChoiceDetailsValue : {
-        width : 300
+        width : 300,
+        color: "white"
+    
+      },
+      lottieAnimationTwo:{
+    
+        width: 250
+    
       }
 });
 
